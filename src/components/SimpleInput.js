@@ -10,6 +10,9 @@ const SimpleInput = (props) => {
 
   const formSubmissionHandler = (event) => {
     event.preventDefault();
+
+    // validacija
+    if (enteredName.trim() === '') return;
     console.log('ivesta', enteredName);
     // naudojant ref gauti ivesites lauko reiksme
     const enteredValue = nameInputRef.current.value;
