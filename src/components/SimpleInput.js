@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
+  const [enteredNameIsValid, setEnteredNameIsValid] = useState(true);
   const nameInputRef = useRef();
   const nameInputChangeHandler = (e) => {
     console.log('keystroke');
@@ -12,20 +13,28 @@ const SimpleInput = (props) => {
     event.preventDefault();
 
     // validacija
-    if (enteredName.trim() === '') return;
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
     console.log('ivesta', enteredName);
     // naudojant ref gauti ivesites lauko reiksme
     const enteredValue = nameInputRef.current.value;
     console.log('value using ref', enteredValue);
     // isvalyti input po submit
     setEnteredName('');
+    setEnteredNameIsValid(true);
 
     //nerekuomenduojama
     // nameInputRef.current.value=''
   };
+
+  const nameInputClasses = enteredNameIsValid
+    ? 'form-control'
+    : 'form-control invalid';
   return (
     <form autoComplete="off" onSubmit={formSubmissionHandler}>
-      <div className="form-control">
+      <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
           ref={nameInputRef}
@@ -34,6 +43,9 @@ const SimpleInput = (props) => {
           type="text"
           id="name"
         />
+        {!enteredNameIsValid && (
+          <p className="error-text">Name must not be empty</p>
+        )}
       </div>
       <div className="form-actions">
         <button>Submit</button>
