@@ -1,66 +1,53 @@
-import { useState, useRef } from 'react';
-
+import { useState } from 'react';
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
-  const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
+  // const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
   const [enteredNameTouched, setEnteredNameTouched] = useState(false);
-  const nameInputRef = useRef();
-  const nameInputChangeHandler = (e) => {
-    console.log('keystroke');
-    setEnteredName(e.target.value);
-    // validation
-    if (e.target.value.trim() !== '') {
-      setEnteredNameIsValid(true);
-    }
-  };
+  const [formIsValid, setFormValid] = useState(false);
 
+  const enteredNameIsValid = enteredName.trim() !== '';
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  const nameInputChangeHandler = (event) => {
+    console.log('keystroke');
+    setEnteredName(event.target.value);
+  };
   const formSubmissionHandler = (event) => {
+    // sustabdyti forma nuo siuntimo nustatytuoju budu
     event.preventDefault();
 
     // formos siuntimas reiskia kad visi laukai yra paliesti
     setEnteredNameTouched(true);
 
     // validacija
-    if (enteredName.trim() === '') {
-      setEnteredNameIsValid(false);
+    if (!enteredNameIsValid) {
       return;
     }
-    console.log('ivesta', enteredName);
-    // naudojant ref gauti ivesites lauko reiksme
-    const enteredValue = nameInputRef.current.value;
-    console.log('value using ref', enteredValue);
+
     // isvalyti input po submit
     setEnteredName('');
-    setEnteredNameIsValid(true);
-
-    //nerekuomenduojama
-    // nameInputRef.current.value=''
+    setEnteredNameTouched(false);
   };
-
   const nameInputBlurHandler = (event) => {
     setEnteredNameTouched(true);
     // validacija
-    if (event.target.value.trim() === '') {
-      setEnteredNameIsValid(false);
+    if (!enteredNameIsValid) {
       return;
     }
-    setEnteredNameIsValid(true);
   };
 
-  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+  const nameInputClasses = nameInputIsInvalid
+    ? 'form-control invalid'
+    : 'form-control';
 
-  const nameInputClasses = !nameInputIsInvalid
-    ? 'form-control'
-    : 'form-control invalid';
   return (
-    <form autoComplete="off" onSubmit={formSubmissionHandler}>
+    <form onSubmit={formSubmissionHandler}>
       <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
-          onBlur={nameInputBlurHandler}
-          ref={nameInputRef}
           value={enteredName}
           onChange={nameInputChangeHandler}
+          onBlur={nameInputBlurHandler}
           type="text"
           id="name"
         />
