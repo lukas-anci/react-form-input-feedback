@@ -13,6 +13,12 @@ const SimpleInput = (props) => {
     console.log('ivesta', enteredName);
     // naudojant ref gauti ivesites lauko reiksme
     const enteredValue = nameInputRef.current.value;
+    console.log('value using ref', enteredValue);
+    // isvalyti input po submit
+    setEnteredName('');
+
+    //nerekuomenduojama
+    // nameInputRef.current.value=''
   };
   return (
     <form autoComplete="off" onSubmit={formSubmissionHandler}>
