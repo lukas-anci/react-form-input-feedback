@@ -8,6 +8,10 @@ const SimpleInput = (props) => {
   const nameInputChangeHandler = (e) => {
     console.log('keystroke');
     setEnteredName(e.target.value);
+    // validation
+    if (e.target.value.trim() !== '') {
+      setEnteredNameIsValid(true);
+    }
   };
 
   const formSubmissionHandler = (event) => {
@@ -33,6 +37,16 @@ const SimpleInput = (props) => {
     // nameInputRef.current.value=''
   };
 
+  const nameInputBlurHandler = (event) => {
+    setEnteredNameTouched(true);
+    // validacija
+    if (event.target.value.trim() === '') {
+      setEnteredNameIsValid(false);
+      return;
+    }
+    setEnteredNameIsValid(true);
+  };
+
   const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
   const nameInputClasses = !nameInputIsInvalid
@@ -43,6 +57,7 @@ const SimpleInput = (props) => {
       <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
+          onBlur={nameInputBlurHandler}
           ref={nameInputRef}
           value={enteredName}
           onChange={nameInputChangeHandler}
