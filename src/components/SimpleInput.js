@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 const SimpleInput = (props) => {
   const [enteredName, setEnteredName] = useState('');
   const [enteredNameIsValid, setEnteredNameIsValid] = useState(true);
+  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
   const nameInputRef = useRef();
   const nameInputChangeHandler = (e) => {
     console.log('keystroke');
@@ -11,6 +12,9 @@ const SimpleInput = (props) => {
 
   const formSubmissionHandler = (event) => {
     event.preventDefault();
+
+    // formos siuntimas reiskia kad visi laukai yra paliesti
+    setEnteredNameTouched(true);
 
     // validacija
     if (enteredName.trim() === '') {
@@ -29,7 +33,9 @@ const SimpleInput = (props) => {
     // nameInputRef.current.value=''
   };
 
-  const nameInputClasses = enteredNameIsValid
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
+
+  const nameInputClasses = !nameInputIsInvalid
     ? 'form-control'
     : 'form-control invalid';
   return (
@@ -43,7 +49,7 @@ const SimpleInput = (props) => {
           type="text"
           id="name"
         />
-        {!enteredNameIsValid && (
+        {nameInputIsInvalid && (
           <p className="error-text">Name must not be empty</p>
         )}
       </div>
