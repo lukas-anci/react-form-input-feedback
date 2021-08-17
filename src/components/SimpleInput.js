@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
+import useInput from './../hook/useInput';
 const SimpleInput = (props) => {
+  const {
+    value: enteredName,
+    hasError: nameInputHasError,
+    isValid: enteredNameIsValid,
+    valueChangeHandler: nameChangeHandler,
+    valueBlurHandler: nameBlurHandler,
+    reset: resetNameInput,
+  } = useInput((value) => value.trim().length >= 3);
+
   const [formIsValid, setFormIsValid] = useState(false);
 
   const [enterEmail, setEnterEmail] = useState('');
   const [enterEmailTouched, setEnterEmailTouched] = useState(false);
 
-  const emailValidationRegex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  const nameValidation = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
-
-  const enteredEmailIsValid = emailValidationRegex.test(enterEmail);
+  const enteredEmailIsValid = enterEmail.includes('@');
 
   // const enteredEmailIsValid = !re;
   const emailInputIsInvalid = !enteredEmailIsValid && enterEmailTouched;
@@ -23,11 +29,6 @@ const SimpleInput = (props) => {
       : setFormIsValid(false);
   }, [enteredNameIsValid, enteredEmailIsValid]);
 
-  const nameInputChangeHandler = (event) => {
-    console.log('keystroke');
-    setEnteredName(event.target.value);
-  };
-
   const emailInputChangeHandler = (event) => {
     console.log('email keystroke');
     setEnterEmail(event.target.value);
@@ -38,7 +39,6 @@ const SimpleInput = (props) => {
 
     // formos siuntimas reiskia kad visi laukai yra paliesti
     setEnterEmailTouched(true);
-    setEnteredNameTouched(true);
 
     // validacija
     if (!enteredNameIsValid || !enteredEmailIsValid) {
@@ -46,18 +46,11 @@ const SimpleInput = (props) => {
     }
 
     // isvalyti input po submit
-    setEnteredName('');
-    setEnteredNameTouched(false);
+    resetNameInput();
     setEnterEmail('');
     setEnterEmailTouched(false);
   };
-  const nameInputBlurHandler = (event) => {
-    setEnteredNameTouched(true);
-    // validacija
-    if (!enteredNameIsValid) {
-      return;
-    }
-  };
+
   const emailInputHandler = (event) => {
     setEnterEmailTouched(true);
     if (!enteredEmailIsValid) {
@@ -76,8 +69,8 @@ const SimpleInput = (props) => {
         <label htmlFor="name">Your Name</label>
         <input
           value={enteredName}
-          onChange={nameInputChangeHandler}
-          onBlur={nameInputBlurHandler}
+          onChange={nameChangeHandler}
+          onBlur={nameBlurHandler}
           type="text"
           id="name"
         />{' '}
@@ -106,3 +99,7 @@ const SimpleInput = (props) => {
 };
 
 export default SimpleInput;
+
+// const emailValidationRegex =
+// /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+// const nameValidation = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
