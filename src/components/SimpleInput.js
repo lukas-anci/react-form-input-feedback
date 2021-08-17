@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 const SimpleInput = (props) => {
-  const [enteredName, setEnteredName] = useState('');
-  const [enteredNameTouched, setEnteredNameTouched] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
 
   const [enterEmail, setEnterEmail] = useState('');
@@ -15,10 +13,6 @@ const SimpleInput = (props) => {
 
   // const enteredEmailIsValid = !re;
   const emailInputIsInvalid = !enteredEmailIsValid && enterEmailTouched;
-
-  const enteredNameIsValid =
-    enteredName.trim().length >= 3 && nameValidation.test(nameValidation);
-  const nameInputHasError = !enteredNameIsValid && enteredNameTouched;
 
   // prideti email input ir prie pavaldinuoti prie esamos logikos
   // email turi tureti @ ir taska po @.
