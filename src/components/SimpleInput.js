@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import useInput from './../hook/useInput';
+import useInput from '../hook/use-input';
+
+const nameValidation = (x) => {
+  return x.trim().length >= 3;
+};
+const emailValidation = (e) => e.includes('@') && e.includes('.');
+
 const SimpleInput = (props) => {
   const {
     value: enteredName,
@@ -8,20 +14,18 @@ const SimpleInput = (props) => {
     valueChangeHandler: nameChangeHandler,
     valueBlurHandler: nameBlurHandler,
     reset: resetNameInput,
-  } = useInput((value) => value.trim().length >= 3);
+  } = useInput(nameValidation);
+
+  const {
+    value: enteredEmail,
+    hasError: emailInputHasError,
+    isValid: enteredEmailIsValid,
+    valueChangeHandler: emailChangeHandler,
+    valueBlurHandler: emailBlurHandler,
+    reset: resetEmailInput,
+  } = useInput(emailValidation);
 
   const [formIsValid, setFormIsValid] = useState(false);
-
-  const [enterEmail, setEnterEmail] = useState('');
-  const [enterEmailTouched, setEnterEmailTouched] = useState(false);
-
-  const enteredEmailIsValid = enterEmail.includes('@');
-
-  // const enteredEmailIsValid = !re;
-  const emailInputIsInvalid = !enteredEmailIsValid && enterEmailTouched;
-
-  // prideti email input ir prie pavaldinuoti prie esamos logikos
-  // email turi tureti @ ir taska po @.
 
   useEffect(() => {
     enteredNameIsValid && enteredEmailIsValid
@@ -29,42 +33,33 @@ const SimpleInput = (props) => {
       : setFormIsValid(false);
   }, [enteredNameIsValid, enteredEmailIsValid]);
 
-  const emailInputChangeHandler = (event) => {
-    console.log('email keystroke');
-    setEnterEmail(event.target.value);
-  };
   const formSubmissionHandler = (event) => {
     // sustabdyti forma nuo siuntimo nustatytuoju budu
     event.preventDefault();
 
-    // formos siuntimas reiskia kad visi laukai yra paliesti
-    setEnterEmailTouched(true);
-
     // validacija
-    if (!enteredNameIsValid || !enteredEmailIsValid) {
+    if (!formIsValid) {
       return;
     }
 
     // isvalyti input po submit
     resetNameInput();
-    setEnterEmail('');
-    setEnterEmailTouched(false);
+    resetEmailInput();
+
+    console.log(enteredName, enteredEmail);
   };
 
-  const emailInputHandler = (event) => {
-    setEnterEmailTouched(true);
-    if (!enteredEmailIsValid) {
-      return;
-    }
-  };
+  // computed classes
   const nameInputClasses = nameInputHasError
     ? 'form-control invalid'
     : 'form-control';
-  const emailInputClasses = emailInputIsInvalid
+  // email
+  const emailInputClasses = emailInputHasError
     ? 'form-control invalid'
     : 'form-control';
+
   return (
-    <form autoComplete="off" onSubmit={formSubmissionHandler}>
+    <form onSubmit={formSubmissionHandler}>
       <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
@@ -73,22 +68,22 @@ const SimpleInput = (props) => {
           onBlur={nameBlurHandler}
           type="text"
           id="name"
-        />{' '}
+        />
         {nameInputHasError && (
-          <p className="error-text">Name must be at least 3 characters long</p>
+          <p className="error-text">Name must be at least 3 letters</p>
         )}
       </div>
       <div className={emailInputClasses}>
-        <label htmlFor="name">Email</label>
+        <label htmlFor="email">Your Email</label>
         <input
-          value={enterEmail}
-          onChange={emailInputChangeHandler}
-          onBlur={emailInputHandler}
-          type="email"
+          value={enteredEmail}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
+          type="text"
           id="email"
         />
-        {emailInputIsInvalid && (
-          <p className="error-text">Please provide a valid email</p>
+        {emailInputHasError && (
+          <p className="error-text">Please provide valid email</p>
         )}
       </div>
       <div className="form-actions">
@@ -99,7 +94,3 @@ const SimpleInput = (props) => {
 };
 
 export default SimpleInput;
-
-// const emailValidationRegex =
-// /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-// const nameValidation = /^([a-zA-Z]+\s)*[a-zA-Z]+$/;
