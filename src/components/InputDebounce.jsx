@@ -10,9 +10,16 @@ const InputDebounce = (props) => {
   };
 
   useEffect(() => {
-    console.log('Validity check');
-    if (!nameIsTouched) return;
-    setNameIsValid(enteredName.trim().length >= 3);
+    const timer = setTimeout(() => {
+      console.log('Validity check');
+      if (!nameIsTouched) return;
+      setNameIsValid(enteredName.trim().length >= 3);
+    }, 2000);
+
+    return () => {
+      console.log('spring clean up');
+      clearTimeout(timer);
+    };
   }, [enteredName, nameIsTouched]);
 
   return (
